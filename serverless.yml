@@ -1,0 +1,27 @@
+service:
+  # nome do service
+  name: ignitecertificate
+
+plugins:
+  - serverless-offline
+  - serverless-webpack
+
+custom:
+  webpack:
+    # auxilia na execução no ambiente de desenvolvimento
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+provider:
+  name: aws
+
+functions:
+  hello:
+    # caminho da função serverless
+    handler: src/functions/hello.handle
+    # formato que vai chamar nossa função serverless
+    events: 
+      - http:
+        path: /hello
+        method: GET
+        cors: true
