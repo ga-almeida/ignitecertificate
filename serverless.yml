@@ -27,14 +27,14 @@ provider:
   region: sa-east-1
 
 functions:
-  hello:
+  generateCertificate:
     # caminho da função serverless
-    handler: src/functions/hello.handle
+    handler: src/functions/generateCertificate.handle
     # formato que vai chamar nossa função serverless
     events: 
       - http:
-        path: /hello
-        method: GET
+        path: /generateCertificate
+        method: POST
         cors: true
 
 resources:
