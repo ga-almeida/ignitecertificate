@@ -5,12 +5,21 @@ service:
 plugins:
   - serverless-offline
   - serverless-webpack
+  - serverless-dynamodb-local
 
 custom:
   webpack:
     # auxilia na execução no ambiente de desenvolvimento
     webpackConfig: ./webpack.config.js
     includeModules: true
+  dynamodb:
+    stages:
+      - dev
+      - local
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
 
 provider:
   name: aws
@@ -27,3 +36,20 @@ functions:
         path: /hello
         method: GET
         cors: true
+
+resources:
+  # criando um banco de dados Dynamodb
+  Resources:
+    dbCertificateUsers:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        TableName: users_certificates
+        AttributeDefinitions:
+          - AttributeName: id
+          - AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
