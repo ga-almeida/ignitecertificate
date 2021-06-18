@@ -32,14 +32,26 @@ const compile = async function (data: ITemplate) {
 export const handle = async (event) => {
   const { id, name, grade } = JSON.parse(event.body) as ICreateCertificate;
 
-  await document.put({
-    TableName: "users_certificates",
-    Item: {
-      id,
-      name,
-      grade,
+  const response = await document.query({
+    TableName: "users_certificate",
+    KeyConditionExpression: "id = :id",
+    ExpressionAttributeValues: {
+      ":id": id
     }
   }).promise();
+
+  const userAlreadyExists = response.Items[0];
+
+  if (!userAlreadyExists) {
+    await document.put({
+      TableName: "users_certificates",
+      Item: {
+        id,
+        name,
+        grade,
+      }
+    }).promise();
+  }
 
   // Gerar Template
   const medalPath = path.join(process.cwd(), "src", "templates", "selo.png");

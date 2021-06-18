@@ -36,6 +36,15 @@ functions:
         path: /generateCertificate
         method: POST
         cors: true
+  verifyCertificate:
+    # caminho da função serverless
+    handler: src/functions/verifyCertificate.handle
+    # formato que vai chamar nossa função serverless
+    events: 
+      - http:
+        path: /verifyCertificate/{id}
+        method: GET
+        cors: true
 
 resources:
   # criando um banco de dados Dynamodb
