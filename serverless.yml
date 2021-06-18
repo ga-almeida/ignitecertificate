@@ -20,11 +20,26 @@ custom:
       port: 8000
       inMemory: true
       migrate: true
+  bucket: serverlesscertificateignite
+
+package:
+  # todas funcionalidade são empacotadas de forma individual
+  individualy: true
 
 provider:
   name: aws
   runtime: nodejs14.x
   region: sa-east-1
+  # Definindo permissões aws
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource: "*"
 
 functions:
   generateCertificate:
@@ -36,6 +51,12 @@ functions:
         path: /generateCertificate
         method: POST
         cors: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:PutItem
+        Resource: "arn:aws:dynamodb:${self.provider.region}:*:table/users_certificates"
   verifyCertificate:
     # caminho da função serverless
     handler: src/functions/verifyCertificate.handle
@@ -45,6 +66,11 @@ functions:
         path: /verifyCertificate/{id}
         method: GET
         cors: true
+        iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: "arn:aws:dynamodb:${self.provider.region}:*:table/users_certificates"
 
 resources:
   # criando um banco de dados Dynamodb
